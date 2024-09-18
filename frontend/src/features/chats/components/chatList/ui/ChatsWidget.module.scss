@@ -1,0 +1,73 @@
+.container {
+  width: clamp(200px,100%,400px);
+  height: 100%;
+  flex-grow: 0;
+  transition: 0.5s ease ;
+  min-width: 200px;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  border-right: solid 1px var(--secondary-color);
+  background-color: var(--bg-color2);
+}
+.search{
+  padding: var(--gap-madium);
+  width: 100%;
+}
+.content{
+
+  overflow-y: auto;
+  gap: var(--gap-madium);
+  flex-direction: column;
+  padding: var(--gap-madium);
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  .scroll{
+    padding-right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-madium);
+    overflow-x: hidden;
+    overflow-y: auto;
+    &::-webkit-scrollbar{
+
+      background: transparent;
+      width: 4px;
+    }
+    &::-webkit-scrollbar-thumb{
+      background: transparent;
+    }
+    &:hover {
+      &::-webkit-scrollbar-thumb{
+        background:var(--on-secondary-color);
+      }
+      &::-webkit-scrollbar{
+
+        background: var(--secondary-color);
+      }
+    }
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 700px){
+
+  .container{
+    transition: 0.5s ease ;
+    max-width: 700px;
+    width: clamp(0px,100%,700px) ;
+    z-index: 400;
+    background-color: var(--bg-color2);
+    position: absolute;
+    left: 0;
+  }
+  .closed{
+    transition: 0.5s ease ;
+    overflow: hidden;
+    min-width: 0;
+    width: 0 ;
+    position: relative !important;
+  }
+}

@@ -1,0 +1,15 @@
+.container {
+  overflow: hidden;
+  flex-direction: column;
+  width: clamp(200px,100%,1500px);
+  min-width: 200px;
+  flex-grow: 1;
+  height: 100%;
+  display: flex;
+  border-right: solid 1px var(--secondary-color);
+}
+.HeadContent{
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-small);
+}

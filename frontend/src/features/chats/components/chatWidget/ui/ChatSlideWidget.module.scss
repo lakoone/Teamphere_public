@@ -1,0 +1,112 @@
+.container {
+  position: relative;
+  background-color: var(--bg-color2);
+  height: 100%;
+  width: 370px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 0 20px;
+  gap: var(--gap-madium);
+  overflow: hidden;
+  transition: 0.5s ease;
+}
+.content{
+  gap: var(--gap-large);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding-right: 10px;
+  padding-top: 20px;
+  overflow-y: auto;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.none{
+  display: none;
+}
+.center{
+  align-items: center;
+  justify-content: center !important;
+}
+.closeContainer{
+  align-items: center;
+  transition: 0.5s ease;
+  width: 100px;
+  padding: 10px;
+}
+.tasks{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-large);
+  padding-bottom: var(--gap-madium);
+
+}
+.tasksContent{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: var(--gap-small);
+  align-items: center;
+}
+.taskHeader{
+  gap: var(--gap-small);
+  width: 100%;
+  align-items: center;
+  display: flex;
+}
+.total{
+  justify-self: flex-end;
+  margin-left: auto;
+}
+.header{
+
+  padding: 15px 0;
+  border-bottom: solid 2px var(--secondary-color);
+  z-index: 100;
+  background-color: var(--bg-color2);
+  background-image: none;
+  top: 0;
+  position: sticky;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-small);
+  min-width: 100%;
+  max-width: 100%;
+  .top{
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+@media screen and (max-width: 700px){
+  .container {
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 300;
+    padding-top: 0;
+    width: clamp(200px,100%,700px);
+  }
+  .closeContainer{
+    align-items: center;
+    transition: 0.5s ease;
+    width: 0 !important;
+    right: -20px !important;
+    min-width: 0;
+    padding: 0;
+  }
+  .open{
+    display: flex;
+    transition: 0.5s ease;
+    width: clamp(200px,100%,400px);
+
+  }
+}

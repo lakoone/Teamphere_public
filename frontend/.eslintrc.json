@@ -1,0 +1,28 @@
+{
+  "root": true,
+  "env": { "browser": true, "es2020": true },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react-hooks/recommended",
+    "prettier"
+  ],
+  "ignorePatterns": ["dist", ".eslintrc.cjs"],
+  "parser": "@typescript-eslint/parser",
+  "rules": {
+    "no-console": "off",
+    "quotes":["off","single"],
+    "jsx-quotes": ["off","prefer-double"],
+    "prefer-const": "off",
+    "indent": ["off",2],
+    "max-len": ["off",{"code":120}],
+    "@typescript-eslint/no-unused-vars":"off",
+    "react/no-unescaped-entities": 0,
+    "@typescript-eslint/no-explicit-any":"off"
+  },
+  "settings": {},
+  "parserOptions": {},
+  "globals": {},
+  "overrides": [],
+  "noInlineConfig": false
+}

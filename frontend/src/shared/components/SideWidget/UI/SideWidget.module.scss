@@ -1,0 +1,16 @@
+.container {
+  flex-direction: column;
+  height: 100vh;
+  z-index: 300;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  right: 0
+}
+@media screen and (max-width: 700px){
+  .container{
+    height: 100svh;
+    overflow: hidden;
+  }
+}

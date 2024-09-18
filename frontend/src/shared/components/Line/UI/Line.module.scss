@@ -1,0 +1,17 @@
+.horizontal {
+  background-color: var(--secondary-color);
+  min-width: 40px;
+  flex: 1;
+  max-height: 5px;
+  min-height: 5px;
+  border-radius: 3px;
+}
+.vertical{
+  background-color: var(--secondary-color);
+  min-height: 40px;
+  flex: 1;
+  max-width: 5px;
+  min-width: 5px;
+  border-radius: 3px;
+
+}

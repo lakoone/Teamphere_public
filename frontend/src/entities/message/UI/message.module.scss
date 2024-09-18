@@ -1,0 +1,35 @@
+.container {
+  max-width: 600px;
+  min-width: 70px;
+  border-radius: 20px;
+  border-top-left-radius: 0;
+  background-color: var(--secondary-color);
+  padding:var(--gap-small);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  gap: var(--gap-small);
+  justify-content: flex-start;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  span{
+
+    font-size: 16px;
+    font-weight: 300;
+  }
+}
+.images{
+  border-radius: 10px;
+  gap: var(--gap-small);
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+.owner{
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 20px;
+  color: black;
+  background-color: var(--inverted-bg-color);
+}

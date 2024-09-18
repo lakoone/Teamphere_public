@@ -1,0 +1,16 @@
+
+.dropzone{
+  padding: var(--gap-madium);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius-meduim);
+  width: 100%;
+  height: 100%;
+  border: dashed var(--secondary-color) 3px;
+}
+.onDrop{
+  border: var(--surface-color) dashed 3px;
+  background-color: var(--secondary-color);
+}

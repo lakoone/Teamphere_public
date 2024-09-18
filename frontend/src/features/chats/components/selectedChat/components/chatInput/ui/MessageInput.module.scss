@@ -1,0 +1,41 @@
+.MessageInput{
+  ul{
+    list-style: none;
+  }
+  background-color: var(--bg-color2);
+  overflow: hidden;
+  border-top: solid var(--secondary-color) 1px;
+  min-height: 100px;
+  height: fit-content;
+  padding: var(--gap-small);
+  flex-grow: 0;
+  max-height: 250px;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-small);
+  padding-bottom: 25px;
+}
+.files{
+  padding-left: 50px;
+display: flex;
+gap: var(--gap-small);
+width: 100%;
+flex-wrap: wrap;
+}
+.inputContainer{
+  gap: var(--gap-small);
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+.input{
+  max-height: 200px;
+  height: fit-content;
+  display: flex;
+  align-items: flex-end;
+  width: clamp(100px,100%,1500px);
+}

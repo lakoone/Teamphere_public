@@ -1,0 +1,17 @@
+.HeadContent{
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-small);
+  z-index: 3;
+  overflow: hidden;
+  h3{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+}
+.widget{
+  justify-self: flex-end;
+  margin-left: auto;
+}
+

@@ -1,0 +1,30 @@
+.container{
+  cursor: pointer;
+  &:hover{
+    background-color: var(--bg-color);
+  }
+  svg{
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+  overflow: hidden;
+  justify-content: center;
+  border-radius: 10px;
+  gap: var(--gap-small);
+  background-color: var(--bg-color2);
+  width: fit-content;
+  min-width: 100px;
+  max-width: 100%;
+  padding: var(--gap-small);
+  align-items: center;
+  display: flex;
+  .sizeBlock{
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background-color: transparent;
+  }
+}

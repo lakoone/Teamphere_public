@@ -1,0 +1,69 @@
+
+.content{
+  position: relative;
+  justify-content: flex-end;
+  align-items: flex-end;
+  min-width: 100%;
+  overflow:hidden;
+  display: flex;
+  flex:1;
+  flex-direction: column;
+  .scrollButton{
+    position: absolute;
+    bottom: 10px;
+    left: 1px;
+  }
+  .scroll{
+    position: relative;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    .messageLoader{
+      background-color: var(--bg-color);
+      position: absolute;
+      top: 0;
+      z-index: 1000;
+      height: 60px;
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+    }
+    .daySeparator{
+      background-color: var(--bg-color);
+      top: -1px;
+      height: 25px;
+      border-top: solid 1px var(--secondary-color);
+      position: sticky;
+      z-index: 5 !important;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .messages{
+      margin-top: auto;
+      height: fit-content;
+      align-items: flex-start;
+      justify-content: flex-end;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: var(--gap-madium);
+      padding: var(--gap-large);
+      padding-bottom: 0;
+    }
+  }
+
+}
+.seen{
+  min-height: 40px;
+  padding: var(--gap-small);
+  padding-top: 0;
+  width: 100%;
+}
+@media screen and (max-width: 700px){
+  .content{}
+}

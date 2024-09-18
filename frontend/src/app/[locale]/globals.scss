@@ -1,0 +1,99 @@
+@value font: 'Mariupol',Arial, sans-serif;
+
+:root{
+  --font-family-main: #{font};
+  --font-size-s: #{12px};
+  --font-line-s: #{20px};
+  --font-size-m: #{16px};
+  --font-line-m: #{24px};
+  --font-size-l: #{24px};
+  --font-line-l: #{32px};
+  --font-s: var(--font-size-s) / var(--font-line-s) var(--font-family-main);
+  --font-m: var(--font-size-m) / var(--font-line-m) var(--font-family-main);
+  --font-l: var(--font-size-l) / var(--font-line-l) var(--font-family-main);
+
+  // Element sizes:
+  --gap-small: 10px;
+  --gap-madium: 20px;
+  --gap-large: 30px;
+  --border-radius-large: 20px;
+  --border-radius-meduim: 15px;
+  --border-radius-small: 10px;
+
+  // Colors:
+  --bg-color: #{#121212};
+  --inverted-bg-color: #{#F7F7F8};
+  --primary-color: #{#462EFF};
+  --primary-color2: #{#7ad9a5};
+  --secondary-color: #{#282828};
+  --bg-color2: #{#1A1A1A};
+  --inverted-primary-color: #{#F3F5F6};
+  --inverted-secondary-color: #{#F7F7F8};
+  --on-secondary-color: #{#626262};
+  --surface-color:#{#858585}
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+
+* {
+  &::-webkit-scrollbar{
+    width: 7px;
+    height: 7px;
+    border-radius: 5px;
+    background-color: var(--secondary-color);
+  }
+  &::-webkit-scrollbar-thumb{
+    border-radius: 5px;
+    background-color: var(--on-secondary-color);
+  }
+
+  margin: 0;
+}
+body {
+  overflow-y: hidden;
+  background-color: var(--bg-color);
+  font-family: var(--font-family-main);
+  font: var(--font-m) ;
+  line-height: 1.3;
+  font-weight: 500;
+  width: 100vw;
+  height: 100svh;
+  -webkit-font-smoothing: antialiased;
+}
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+input, button, textarea, select {
+  font: inherit;
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  border: none;
+  -webkit-text-fill-color: white;
+  -webkit-box-shadow: none;
+  transition: background-color 50000s ease-in-out 0s;
+};
+h1, h2, h3, h4, h5, h6 {
+  white-space: nowrap ;
+  overflow: hidden ;
+  text-overflow: ellipsis ;
+
+}
+a:-webkit-any-link {
+  color: var(--inverted-bg-color);
+  cursor: pointer;
+  text-decoration: none;
+}
+#root, #__next {
+  isolation: isolate;
+}

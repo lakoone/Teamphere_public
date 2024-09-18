@@ -1,0 +1,57 @@
+.container {
+  &:hover{
+    background-color: var(--secondary-color);
+  }
+  border-radius: var(--border-radius-meduim);
+  cursor: pointer;
+  width: 100%;
+  gap: var(--gap-small);
+  display: flex;
+  padding: var(--gap-small);
+}
+.content{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+}
+.Top{
+
+  h4{
+    color: var(--surface-color);
+    width: 75%;
+  }
+  width: 100%;
+  justify-content: space-between;
+  display: flex;
+}
+.Bottom{
+  height: 30px;
+  display: flex;
+  width: 100%;
+  h5{
+    width: 70%;
+    font-size: var(--font-size-m);
+  }
+  .messageText{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+    align-items: center;
+    display:flex;
+    gap:5px
+  }
+  .badge{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    width: 34px;
+    justify-self: flex-end;
+  }
+}
+.active{
+  background-color: var(--secondary-color);
+}

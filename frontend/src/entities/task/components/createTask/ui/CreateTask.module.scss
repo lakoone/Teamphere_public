@@ -1,0 +1,119 @@
+.container {
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+  gap: 30px;
+  > *{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+}
+.top{
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  > :last-child{
+    justify-self: flex-end !important;
+    margin-left: auto !important;
+  }
+}
+.title{
+  color: #858585
+}
+.content{
+  padding-right: var(--gap-small);
+  ul{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    gap: 10px;
+    list-style-type: none;
+    li{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  }
+  gap: 20px;
+  overflow-y: auto;
+  flex: 1;
+  .participants{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .author{
+
+      flex-wrap: wrap;
+      gap: 10px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+
+  }
+  .find{
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-madium);
+    background-color: var(--bg-color2);
+    border-radius: var(--border-radius-meduim);
+  }
+
+  .description{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    .appends{
+      > :last-child{
+        flex: 1;
+        align-items: flex-end;
+      }
+      li{
+        display: flex;
+        gap: 3px;
+        align-items: flex-end;
+      }
+      gap: var(--gap-small);
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-start;
+    }
+
+  }
+}
+.bottom{
+  color: #858585;
+  gap: var(--gap-small);
+  flex-direction: column;
+  height: 70px;
+  overflow: hidden;
+  .lastAction{
+    display: flex;
+    width: 100%;
+    height: fit-content;
+    justify-content: space-between;
+    > :first-child{
+      width: 100px
+    }
+    > :last-child{
+      justify-self: flex-end ;
+      margin-left: auto ;
+    }
+    align-items: center;
+    gap: 5px;
+    flex-direction: row;
+  }
+
+
+
+}

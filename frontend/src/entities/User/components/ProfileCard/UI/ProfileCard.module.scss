@@ -1,0 +1,76 @@
+.photo{
+  min-width: 200px;
+  overflow: hidden;
+  border-radius: 50%;
+  width:200px;
+  img{
+    width:100%;
+  }
+}
+.userData{
+  color: var(--inverted-bg-color);
+  flex: 1;
+  min-height: 250px;
+  max-height: 450px;
+  width: clamp(200px, 100%, 400px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: 20px;
+  .top{
+    align-items: flex-start;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 10px;
+    max-width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    h2{
+      white-space: normal;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .nameContainer{
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+  }
+  .Buttons{
+    display: flex;
+    width: 100%;
+    gap: 10%;
+    justify-content: space-around;
+    margin-top: auto;
+  }
+  .Bio{
+    font-weight: 500;
+    overflow-y: auto;
+    flex: 1;
+    max-width: 450px;
+    min-width:100px;
+
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+}
+@media screen and (max-width: 700px){
+  .photo{
+    position: absolute;
+    min-width: 50px;
+    min-height: 50px;
+    height: 50px;
+    width: 50px;
+  }
+  .top{
+    margin-left: 70px;
+    width: calc(100% - 100px) !important;
+    .name{
+      white-space: normal !important;
+    }
+  }
+}

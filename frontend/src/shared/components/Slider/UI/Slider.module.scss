@@ -1,0 +1,18 @@
+.container {
+
+  width: 100%;
+  height: fit-content;
+  display: grid;
+  gap: 50px;
+  grid-auto-flow: column;
+  padding: 10px 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+
+}
+.snaps{
+  scroll-snap-type: inline mandatory;
+}
+.snaps > * {
+  scroll-snap-align: start;
+}

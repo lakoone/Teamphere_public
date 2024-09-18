@@ -1,0 +1,25 @@
+.container {
+  gap: var(--gap-small);
+  display: flex;
+  flex-direction: column;
+  min-width: 100%;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.profile{
+  width: 100%;
+  cursor: pointer;
+  align-items: center;
+  height: 50px;
+  padding: var(--gap-small);
+  border-radius: var(--border-radius-small);
+  display: flex;
+  gap: var(--gap-small);
+
+}
+.profile.Nofriend:hover {
+  background-color: var(--secondary-color);
+}
+.selected{
+  background-color:var(--secondary-color) ;
+}
