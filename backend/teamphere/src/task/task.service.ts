@@ -2,14 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { v4 as uuidv4 } from 'uuid';
-import * as chalk from 'chalk';
-import { writeLog } from '../helpers/log';
 import { StorageService } from '../storage/storage.service';
 import { fileDTO } from '../chat/dto/init-message.dto';
 import { TaskDTO } from './dto/task.dto';
 import { UpdateTaskDTO } from './dto/update-task.dto';
-const taskSBgColor = chalk.bgRgb(151, 252, 181).black;
-const taskTextColor = chalk.bgRgb(151, 252, 181);
 @Injectable()
 export class TaskService {
   constructor(
@@ -28,12 +24,7 @@ export class TaskService {
         },
       },
     });
-    writeLog(
-      taskSBgColor,
-      taskTextColor,
-      `Get task for user ${userID} :`,
-      tasks,
-    );
+
     return tasks;
   }
   async getCreatedTasksByUser(userID: number) {
@@ -48,12 +39,7 @@ export class TaskService {
         createdBy: { select: { id: true, profile: true } },
       },
     });
-    writeLog(
-      taskSBgColor,
-      taskTextColor,
-      `Get task created by user : ${userID}`,
-      tasks,
-    );
+
     return tasks;
   }
   async getTasksByChat(chatID: string) {
@@ -66,12 +52,7 @@ export class TaskService {
         taskAnswerFiles: { select: { file: true } },
       },
     });
-    writeLog(
-      taskSBgColor,
-      taskTextColor,
-      `Get task by chatID : ${chatID}`,
-      tasks,
-    );
+
     return tasks;
   }
   async getTaskByID(taskID: string) {
@@ -88,9 +69,8 @@ export class TaskService {
   ) {
     const id = uuidv4();
     const { forUsersID, ...taskData } = task;
-    writeLog(taskSBgColor, taskTextColor, 'task before create:', task);
-    writeLog(taskSBgColor, taskTextColor, 'is files in task? :', files);
     const filesMetadata: fileDTO[] = [];
+
     if (files && files.length) {
       for (const file of files) {
         file.originalname = decodeURIComponent(file.originalname);
@@ -138,7 +118,6 @@ export class TaskService {
           taskDescriptionFiles: { select: { file: true } },
         },
       });
-      console.log('TASK AFTER CREATION :', task);
       return task as TaskDTO;
     });
     return result;

@@ -13,18 +13,13 @@ import { AuthService } from '../../auth/auth.service';
 import { forwardRef, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ChatService } from '../../chat/chat.service';
-import { writeLog } from '../../helpers/log';
 import { MessageDTO } from '../../message/dto/message.dto';
 import Redis from 'ioredis';
 import { CreateMessageDto } from '../../message/dto/create-message.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { QueueService } from '../../queue/message-queue.service';
-import * as chalk from 'chalk';
 import { NotificationGateway } from '../notification/NotificationGateway.service';
 import * as process from 'process';
-
-const chatsServiceBgColor = chalk.bgMagentaBright.black;
-const chatsServiceTextColor = chalk.magentaBright;
 
 @WebSocketGateway({
   namespace: 'api/chat',
@@ -65,22 +60,13 @@ export class ChatsGateway
   }
   messages: MessageDTO[] = [];
   async afterInit() {
-    writeLog(chatsServiceBgColor, chatsServiceTextColor, 'CHAT WEBSOCKET INIT');
-
     this.server.use(async (socket, next) => {
       const token = socket.handshake.query.token as string;
-      writeLog(chatsServiceBgColor, chatsServiceTextColor, 'Get TOKEN:', token);
       if (!token) {
         return next(new Error('Authentication token missing'));
       }
       try {
         const decoded = await this.auth.verifyToken(token);
-        writeLog(
-          chatsServiceBgColor,
-          chatsServiceTextColor,
-          'Token status:',
-          decoded,
-        );
 
         if (decoded) (socket as any).userId = decoded.id;
         next();
@@ -90,24 +76,13 @@ export class ChatsGateway
     });
   }
   async handleConnection(client: Socket & { userId: string }) {
-    writeLog(
-      chatsServiceBgColor,
-      chatsServiceTextColor,
-      'User',
-      client.userId,
-      'connected to chatSocket',
-    );
+    console.log(`${client.userId} connected`);
   }
   @SubscribeMessage('joinChat')
   async handleJoinChat(
     @MessageBody() chatId: string,
     @ConnectedSocket() client: Socket & { userId: string; chatID: string },
   ) {
-    writeLog(
-      chatsServiceBgColor,
-      chatsServiceTextColor,
-      `CLIENT ID : ${client.userId}, ChatID : ${chatId}`,
-    );
     const validation = await this.chatService.validateUserByChat(
       Number(client.userId),
       chatId,
@@ -115,21 +90,10 @@ export class ChatsGateway
     if (validation) {
       client.chatID = chatId;
       client.join(chatId);
-      writeLog(
-        chatsServiceBgColor,
-        chatsServiceTextColor,
-        `User ${client.userId} connected to chat`,
-        chatId,
-      );
 
       const chatMessages = await this.chatService.getMessages(
         chatId,
         Number(client.userId),
-      );
-      writeLog(
-        chatsServiceBgColor,
-        chatsServiceTextColor,
-        `sending ${chatMessages.length} messages: `,
       );
 
       client.emit('chatMessages', chatMessages);
@@ -140,12 +104,6 @@ export class ChatsGateway
     @MessageBody() messageID: string,
     @ConnectedSocket() client: Socket & { userId: string; chatID: string },
   ) {
-    writeLog(
-      chatsServiceBgColor,
-      chatsServiceTextColor,
-      'New message read: ',
-      messageID,
-    );
     const readerInfo = { messageID, readerID: client.userId };
     this.server.to(client.chatID).emit('newReader', readerInfo);
     await this.queueService.addReader({
@@ -156,13 +114,6 @@ export class ChatsGateway
   }
   @SubscribeMessage('sendMessageFromClient')
   async handleSendMessage(@MessageBody() payload: CreateMessageDto) {
-    writeLog(
-      chatsServiceBgColor,
-      chatsServiceTextColor,
-      'New message received: ',
-      payload.text,
-    );
-
     const message: MessageDTO = {
       id: uuidv4(),
       createdAt: new Date(),
@@ -191,11 +142,6 @@ export class ChatsGateway
     await this.queueService.addMessage(message);
   }
   handleDisconnect(client: Socket & { userId: string }) {
-    writeLog(
-      chatsServiceBgColor,
-      chatsServiceTextColor,
-      'User disconnected from chatSocket: UserID:',
-      client.userId,
-    );
+    console.log(`${client.userId} disconnected`);
   }
 }

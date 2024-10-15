@@ -2,11 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { firebaseAdmin } from '../../firebase-admin.config';
 import { PrismaService } from '../prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
-import * as chalk from 'chalk';
-import { writeLog } from '../helpers/log';
 
-const storageServiceBgColor = chalk.bgGray.black;
-const storageServiceTextColor = chalk.gray;
 @Injectable()
 export class StorageService {
   constructor(private prisma: PrismaService) {}
@@ -24,13 +20,6 @@ export class StorageService {
     name: string;
     type: string;
   }> {
-    writeLog(
-      storageServiceBgColor,
-      storageServiceTextColor,
-      `uploading file : `,
-      props.file.originalname,
-    );
-
     if (!props.userID && !props.chatID) {
       throw Error('Bad destination way');
     }
@@ -58,12 +47,6 @@ export class StorageService {
       size: props.file.size,
       type: props.file.mimetype,
     };
-    writeLog(
-      storageServiceBgColor,
-      storageServiceTextColor,
-      `file data to create:`,
-      fileData,
-    );
 
     console.log(fileData);
     await this.prisma.file.create({ data: fileData });
@@ -79,20 +62,8 @@ export class StorageService {
   async deleteFile(destination: string): Promise<void> {
     const file = this.bucket.file(destination);
     await file.delete();
-    writeLog(
-      storageServiceBgColor,
-      storageServiceTextColor,
-      `deleted file :`,
-      destination,
-    );
   }
   async getFileUrl(destination: string): Promise<string> {
-    writeLog(
-      storageServiceBgColor,
-      storageServiceTextColor,
-      `get file URL :`,
-      destination,
-    );
     const file = this.bucket.file(destination);
     const [url] = await file.getSignedUrl({
       action: 'read',

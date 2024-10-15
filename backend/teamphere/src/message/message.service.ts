@@ -2,24 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { MessageDTO } from './dto/message.dto';
-import { writeLog } from '../helpers/log';
 
-import * as chalk from 'chalk';
-
-const messageServiceBgColor = chalk.bgYellow.black;
-const messageServiceTextColor = chalk.yellow;
 @Injectable()
 export class MessageService {
   constructor(private prisma: PrismaService) {}
 
   async CreateMessage(data: MessageDTO[]) {
     try {
-      const date = new Date();
-      writeLog(
-        messageServiceBgColor,
-        messageServiceTextColor,
-        `adding message to DB at ${date.getSeconds()}.${date.getMilliseconds()} s`,
-      );
       return await this.prisma.$transaction(async (tx) => {
         const dataToCreate = data.map(({ files, readers, ...rest }) => ({
           files,
@@ -40,8 +29,6 @@ export class MessageService {
             });
           });
         });
-
-        console.log('FileMessage Pairs:', fileMessagePairs);
 
         if (fileMessagePairs.length > 0) {
           await tx.messageFile.createMany({
@@ -87,12 +74,7 @@ export class MessageService {
           },
         }
       : { chatID: chatID };
-    writeLog(
-      messageServiceBgColor,
-      messageServiceTextColor,
-      'lastLoadedMessageDate : ',
-      lastLoadedMessageDate,
-    );
+
     const messages = await this.prisma.message.findMany({
       where: whereClause,
       orderBy: { createdAt: 'desc' },
@@ -138,12 +120,6 @@ export class MessageService {
   async readMessages(
     readers: { messageID: string; userID: number; chatID: string }[],
   ) {
-    writeLog(
-      messageServiceBgColor,
-      messageServiceTextColor,
-      'Prepare data :',
-      readers,
-    );
     const lastReadMessages = await this.prisma.message.findMany({
       where: {
         id: {
@@ -190,12 +166,7 @@ export class MessageService {
           text: true,
         },
       });
-      writeLog(
-        messageServiceBgColor,
-        messageServiceTextColor,
-        'Unread MESSAGES:',
-        unreadMessages,
-      );
+
       const readerEntries = unreadMessages.map((message) => ({
         messageId: message.id,
         userId: reader[1].reader,
@@ -207,11 +178,5 @@ export class MessageService {
         });
       }
     }
-
-    writeLog(
-      messageServiceBgColor,
-      messageServiceTextColor,
-      'Messages marked as read',
-    );
   }
 }

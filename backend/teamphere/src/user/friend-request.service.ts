@@ -4,11 +4,7 @@ import { NotificationGateway } from '../websocket/notification/NotificationGatew
 import { SendRequestDTO } from './dto/send-request.dto';
 import { FriendService } from './friend.service';
 import { UserService } from './user.service';
-import { writeLog } from '../helpers/log';
-import * as chalk from 'chalk';
 import { UserData } from './dto/user-data.dto';
-const userServiceBgColor = chalk.bgGreen.black;
-const userServiceTextColor = chalk.green;
 @Injectable()
 export class FriendRequestService {
   constructor(
@@ -22,18 +18,11 @@ export class FriendRequestService {
     const results = await this.prisma.friendRequest.findMany({
       where: { toUserId: { in: userIDs } },
     });
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      'finded requests: ',
-      results,
-    );
 
     return results;
   }
 
   async sendFriendRequest(data: SendRequestDTO): Promise<void> {
-    writeLog(userServiceBgColor, userServiceTextColor, 'data: ', data);
     if (data.friendIds.includes(data.userId))
       throw new BadRequestException('You cannot send a request to yourself');
     const existingFriends = await this.prisma.friend.findMany({
@@ -52,12 +41,7 @@ export class FriendRequestService {
         ],
       },
     });
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      'existing requests: ',
-      existingRequests,
-    );
+
     const existingFriendIds = new Set<number>();
 
     existingFriends.forEach((friend) => {
@@ -82,16 +66,11 @@ export class FriendRequestService {
       toUserId: friendId,
     }));
 
-    const res = await this.prisma.friendRequest.createMany({
+    await this.prisma.friendRequest.createMany({
       data: newFriendsData,
       skipDuplicates: true,
     });
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      'RES FROM CREATED REQUESTS',
-      res,
-    );
+
     const requests = await this.getUserRequests(newFriendsIDs);
     await this.notificationGateway.sendFriendRequestNotification(
       data.userId,
@@ -131,12 +110,6 @@ export class FriendRequestService {
       requests[0].toUserId,
     );
 
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      'found user Who accept : ,',
-      userWhoAccepted,
-    );
     if (chats.length) this.notificationGateway.sendCreatedChats(chats);
     if (userWhoAccepted)
       await this.notificationGateway.sendAcceptRequestNotification(
@@ -153,12 +126,7 @@ export class FriendRequestService {
         toUserId: userID,
       },
     });
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      `Is requests ${requestsID} for user ${userID} :`,
-      requestsID.length === result.length,
-    );
+
     if (requestsID.length === result.length) return result;
     else return false;
   }
@@ -171,12 +139,6 @@ export class FriendRequestService {
       status: string;
     }[],
   ): Promise<void> {
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      `requests : `,
-      requests.length,
-    );
     if (!requests) {
       throw new Error('Invalid or already processed request');
     }

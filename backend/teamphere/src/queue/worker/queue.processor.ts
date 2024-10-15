@@ -7,10 +7,7 @@ import {
 } from '@nestjs/bullmq';
 import { MessageDTO } from '../../message/dto/message.dto';
 import { MessageService } from '../../message/message.service';
-import { writeLog } from '../../helpers/log';
 import * as process from 'process';
-
-import * as chalk from 'chalk';
 
 export type Reader = {
   messageID: string;
@@ -18,8 +15,6 @@ export type Reader = {
   userID: number;
 };
 
-const queueServiceBgColor = chalk.bgBlue.black;
-const queueServiceTextColor = chalk.blue;
 @Processor('messageQueue', {
   connection: {
     host: 'redis',
@@ -35,19 +30,12 @@ export class QueueProcessor extends WorkerHost {
     private readonly messageService: MessageService,
     @InjectQueue('messageQueue') private messageQueue: Queue,
   ) {
-    console.log(`PROCESSOR CONSTRUCTOR PID ${process.pid}`);
     super();
   }
 
   async process(job: Job<any, any, string>): Promise<any> {
-    const date = new Date();
     const currentTime = Date.now();
-    writeLog(
-      queueServiceBgColor,
-      queueServiceTextColor,
-      'job name: ',
-      job.name,
-    );
+
     switch (job.name) {
       case 'processMessage':
         this.messageBuffer.push(job.data);
@@ -56,11 +44,7 @@ export class QueueProcessor extends WorkerHost {
         this.readerBuffer.push(job.data);
         break;
     }
-    writeLog(
-      queueServiceBgColor,
-      queueServiceTextColor,
-      `WORKER get a job [${job.id}] and paused queue at ${date.getSeconds()}.${date.getMilliseconds()}s`,
-    );
+
     if (currentTime - this.lastSentTime > 1000 && !this.isProcessing) {
       await this.throttleProcess();
     }
@@ -70,11 +54,6 @@ export class QueueProcessor extends WorkerHost {
     await this.processBatch();
     setTimeout(async () => {
       if (this.messageBuffer.length > 0 || this.readerBuffer.length > 0) {
-        writeLog(
-          queueServiceBgColor,
-          queueServiceTextColor,
-          'buffer has message after throttleProcess',
-        );
         await this.throttleProcess();
       }
       this.isProcessing = false;
@@ -85,7 +64,6 @@ export class QueueProcessor extends WorkerHost {
       const messagesToProcess = [...this.messageBuffer];
       this.messageBuffer = [];
       this.lastSentTime = Date.now();
-      console.log(`Processing batch of ${messagesToProcess.length} messages`);
       try {
         await this.messageService.CreateMessage(messagesToProcess);
       } catch (error) {

@@ -16,13 +16,9 @@ import { JwtAccessGuard } from './guards/jwt-auth.guard';
 import { Request, Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { CookieService } from './cookies.service';
-import { writeLog } from '../helpers/log';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
-import * as chalk from 'chalk';
 import { Throttle } from '@nestjs/throttler';
 import { ConfigService } from '@nestjs/config';
-const authServiceBgColor = chalk.bgYellowBright.black;
-const authServiceTextColor = chalk.yellowBright;
 @Controller('/api/auth')
 export class AuthController {
   constructor(
@@ -33,15 +29,12 @@ export class AuthController {
   @Get('email')
   async checkEmail(@Res() response: Response, @Query('email') email?: string) {
     if (!email) throw new BadRequestException('Invalid data');
-    writeLog(authServiceBgColor, authServiceTextColor, 'Email:', email);
     const isEmailExist = await this.authService.isEmailExist(email);
     response.send({ isEmailExist });
   }
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Req() req, @Res() res: Response) {
-    writeLog(authServiceBgColor, authServiceTextColor, 'req.user:', req.user);
-
     const { accessToken, refreshToken } = await this.authService.login(
       req.user,
     );
@@ -57,23 +50,10 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req: Request, @Res() res: Response) {
     const { user } = req;
-    writeLog(authServiceBgColor, authServiceTextColor, 'user :', user);
 
     const tokens = await this.authService.loginWithGoogle(user);
     this.cookieService.setAccessToken(res, tokens.access_token);
     this.cookieService.setRefreshToken(res, tokens.refresh_token);
-    writeLog(
-      authServiceBgColor,
-      authServiceTextColor,
-      'GOOGLE CALLBACK REDIRECT : STATUS',
-      this.configService.get<string>('STATUS'),
-    );
-    writeLog(
-      authServiceBgColor,
-      authServiceTextColor,
-      'GOOGLE CALLBACK REDIRECT : DOMAIN',
-      this.configService.get<string>('HOST_DOMAIN'),
-    );
 
     return res.redirect(
       `${this.configService.get<string>('STATUS') === 'prod' ? this.configService.get<string>('HOST_DOMAIN') : 'http://localhost:3000'}/app/message`,
@@ -86,7 +66,6 @@ export class AuthController {
     @Req() req: Request & { user: { id: number } },
     @Res() res: Response,
   ) {
-    writeLog(authServiceBgColor, authServiceTextColor, 'user ID:', req.user.id);
     try {
       const { accessToken } = await this.authService.refresh(req.user.id);
       this.cookieService.setAccessToken(res, accessToken);
@@ -101,12 +80,6 @@ export class AuthController {
     @Req() req: Request & { user: { id: number } },
     @Res() res: Response,
   ) {
-    writeLog(
-      authServiceBgColor,
-      authServiceTextColor,
-      'logout user ID:',
-      req.user.id,
-    );
     await this.authService.logout(req.user.id);
     this.cookieService.clearCookies(res);
 

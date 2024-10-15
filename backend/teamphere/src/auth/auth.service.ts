@@ -4,11 +4,7 @@ import { Prisma } from '@prisma/client';
 import { LoginModel } from './models/login-model/login.model';
 import { PasswordService } from './password.service';
 import { TokenService } from './token.service';
-import * as chalk from 'chalk';
-import { writeLog } from '../helpers/log';
 
-const authServiceBgColor = chalk.bgYellow.black;
-const authServiceTextColor = chalk.yellowBright;
 @Injectable()
 export class AuthService {
   constructor(
@@ -23,11 +19,6 @@ export class AuthService {
     password: string | null,
     userId: number,
   ) {
-    writeLog(
-      authServiceBgColor,
-      authServiceTextColor,
-      `email: ${email} | password: ${password} | userID : ${userId}`,
-    );
     if (await this.isEmailExist(email)) {
       throw new ConflictException('Email is already taken');
     }
@@ -55,33 +46,17 @@ export class AuthService {
     email: string,
     password: string,
   ): Promise<{ id: number } | boolean> {
-    writeLog(
-      authServiceBgColor,
-      authServiceTextColor,
-      `email: ${email} | password: ${password}`,
-    );
-
     const authData = await this.prisma.authData.findUnique({
       where: { email },
     });
-    writeLog(
-      authServiceBgColor,
-      authServiceTextColor,
-      `is user exist: `,
-      authData,
-    );
+
     if (!authData) return false;
 
     const validation = await this.passwordService.comparePassword(
       password,
       authData.passwordHash,
     );
-    writeLog(
-      authServiceBgColor,
-      authServiceTextColor,
-      `is valid user: `,
-      !!validation,
-    );
+
     if (validation) return { id: authData.userId };
 
     return false;
@@ -99,7 +74,6 @@ export class AuthService {
         refreshToken,
       },
     });
-    writeLog(authServiceBgColor, authServiceTextColor, `login user `, user.id);
     return {
       id: user.id || '',
       accessToken,
@@ -110,22 +84,11 @@ export class AuthService {
     const name = `${user.firstName} ${user.lastName || ''}`;
     const picture = user.picture;
     const email = user.email;
-    writeLog(
-      authServiceBgColor,
-      authServiceTextColor,
-      `login with google user: ${name} | ${email}`,
-    );
 
     const isUserExist = await this.prisma.authData.findUnique({
       where: { email: user.email },
     });
     if (!isUserExist) {
-      writeLog(
-        authServiceBgColor,
-        authServiceTextColor,
-        `creating user `,
-        name,
-      );
       const createUser = await this.prisma.$transaction(async (prisma) => {
         const createdUser = await prisma.user.create({
           data: {
@@ -141,12 +104,7 @@ export class AuthService {
             },
           },
         });
-        writeLog(
-          authServiceBgColor,
-          authServiceTextColor,
-          `created user id `,
-          createdUser.id,
-        );
+
         const auth = await this.register(prisma, email, null, createdUser.id);
 
         return { user: createdUser, auth };
@@ -163,7 +121,6 @@ export class AuthService {
         refresh_token: refreshToken,
       };
     }
-    writeLog(authServiceBgColor, authServiceTextColor, `user exist`);
     const payload = { id: isUserExist.userId };
     const refreshToken = this.tokenService.generateRefreshToken(payload);
     await this.prisma.authData.update({
@@ -177,57 +134,30 @@ export class AuthService {
     };
   }
   async logout(userId: number) {
-    writeLog(authServiceBgColor, authServiceTextColor, `user id`, userId);
     try {
       await this.prisma.authData.update({
         where: { userId },
         data: { refreshToken: null },
       });
-      writeLog(authServiceBgColor, authServiceTextColor, `logout successfully`);
     } catch (e) {
-      writeLog(authServiceBgColor, authServiceTextColor, `Error `, e);
+      console.log('error', e);
       throw e;
     }
   }
   async verifyToken(accessToken: string) {
-    writeLog(
-      authServiceBgColor,
-      authServiceTextColor,
-      `access token: `,
-      accessToken,
-    );
     try {
-      const result = await this.tokenService.verifyToken(accessToken);
-      writeLog(
-        authServiceBgColor,
-        authServiceTextColor,
-        `is valid: `,
-        !!result,
-      );
-      return result;
+      return await this.tokenService.verifyToken(accessToken);
     } catch (error: any) {
-      writeLog(
-        authServiceBgColor,
-        authServiceTextColor,
-        `Error: `,
-        error.message,
-      );
+      console.log('error', error);
       throw error;
     }
   }
 
   async refresh(userId: number) {
-    writeLog(authServiceBgColor, authServiceTextColor, `user ID: `, userId);
-
     const newAccessToken = this.tokenService.generateAccessToken({
       id: userId,
     });
-    writeLog(
-      authServiceBgColor,
-      authServiceTextColor,
-      `generated access token: `,
-      newAccessToken,
-    );
+
     return { accessToken: newAccessToken };
   }
   async isEmailExist(email: string) {

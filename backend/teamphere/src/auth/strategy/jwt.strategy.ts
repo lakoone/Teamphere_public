@@ -4,12 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LoginModel } from '../models/login-model/login.model';
 import { Request } from 'express';
-import { writeLog } from '../../helpers/log';
 
-import * as chalk from 'chalk';
-
-const jwtStrategyTextColor = chalk.yellow;
-const jwtStrategyBgColor = chalk.bgYellow.black;
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly configService: ConfigService) {
@@ -32,8 +27,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(req: Request & { userID?: number }, payload: LoginModel) {
-    writeLog(jwtStrategyBgColor, jwtStrategyTextColor, ` payload: `, payload);
-
     return { id: payload.id };
   }
 }

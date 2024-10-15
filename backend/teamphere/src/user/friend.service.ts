@@ -8,10 +8,6 @@ import {
 import { AddFriendDTO } from './dto/add-friend.dto';
 import { ChatService } from '../chat/chat.service';
 import { NotificationGateway } from '../websocket/notification/NotificationGateway.service';
-import * as chalk from 'chalk';
-import { writeLog } from '../helpers/log';
-const userServiceBgColor = chalk.bgGreen.black;
-const userServiceTextColor = chalk.green;
 @Injectable()
 export class FriendService {
   constructor(
@@ -22,12 +18,6 @@ export class FriendService {
   ) {}
 
   async getFriends(id: number, skip: number, take: number, name?: string) {
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      `id: ${id}, skip: ${skip}, take: ${take}, name: ${name}`,
-    );
-
     const friends = await this.prisma.friend.findMany({
       where: {
         OR: [{ userId: id }, { friendId: id }],
@@ -55,19 +45,13 @@ export class FriendService {
       take,
       skip,
     });
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      'Friends retrieved',
-      friends,
-    );
+
     return friends.map((friend) =>
       friend.friendId !== id ? friend.friend : friend.user,
     );
   }
 
   async addFriends(data: AddFriendDTO[]) {
-    writeLog(userServiceBgColor, userServiceTextColor, 'data: ', data);
     const createdChats = await this.prisma.$transaction(async (tx) => {
       const res = await tx.friend.createMany({
         data,
@@ -83,12 +67,6 @@ export class FriendService {
   }
 
   async deleteFriend(userId: number, friendId: number) {
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      `user ID: ${userId}, friendID: ${friendId}`,
-    );
-
     const deletedFriends = await this.prisma.friend.findMany({
       where: {
         OR: [

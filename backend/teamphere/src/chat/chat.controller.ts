@@ -15,13 +15,9 @@ import { CreateChatDTO } from './dto/create-chat.dto';
 import { ChatService } from './chat.service';
 import { Request } from 'express';
 import { FriendService } from '../user/friend.service';
-import { writeLog } from '../helpers/log';
-import * as chalk from 'chalk';
 import { ParseJsonPipe } from '../pipes/ParseJsonPipe';
 import { MessageDTO } from '../message/dto/message.dto';
 import { ThrottlerGuard } from '@nestjs/throttler';
-const chatBgColor = chalk.bgBlue.white;
-const chatTextColor = chalk.blue;
 @Controller('api/chat')
 export class ChatController {
   constructor(
@@ -35,8 +31,6 @@ export class ChatController {
     @Body('data', ParseJsonPipe) data: CreateChatDTO,
     @Req() req: Request & { user: { id: number } },
   ) {
-    writeLog(chatBgColor, chatTextColor, 'data: ', data);
-
     const validation = await this.friendService.isFriend(
       data.participants[0],
       req.user.id,
@@ -60,7 +54,6 @@ export class ChatController {
     @Query('friendID') friendID: string,
     @Req() req: Request & { user: { id: number } },
   ) {
-    writeLog(chatBgColor, chatTextColor, 'friendID:', friendID);
     return await this.chat.getChatIdByParticipants([
       Number(friendID),
       req.user.id,
@@ -88,12 +81,7 @@ export class ChatController {
             lastLoadedMessageDate,
           }
         : null;
-    writeLog(
-      chatBgColor,
-      chatTextColor,
-      `Getting message: chatID ${chatID}, options: `,
-      options,
-    );
+
     const res: MessageDTO[] = await this.chat.getMessages(
       chatID,
       req.user.id,

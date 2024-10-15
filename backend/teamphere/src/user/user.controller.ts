@@ -23,17 +23,14 @@ import { AuthService } from '../auth/auth.service';
 import { GetUsersDTO } from './dto/get-users-dto';
 import { FriendService } from './friend.service';
 import { FriendRequestService } from './friend-request.service';
-import { writeLog } from '../helpers/log';
 import { ChatService } from '../chat/chat.service';
 import { TaskService } from '../task/task.service';
 
-import * as chalk from 'chalk';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ParseJsonPipe } from '../pipes/ParseJsonPipe';
 import { StorageService } from '../storage/storage.service';
 import { CookieService } from '../auth/cookies.service';
-const userServiceBgColor = chalk.bgGreenBright.black;
-const userServiceTextColor = chalk.greenBright;
+
 @Controller('/api/user')
 export class UserController {
   constructor(
@@ -53,12 +50,6 @@ export class UserController {
     @Req() request: Request & { user: { id: number } },
     @Res() res: Response,
   ) {
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      'userID:',
-      request.user.id,
-    );
     const userData = await this.userService.findOne(request.user.id);
     const friends = await this.friendService.getFriends(request.user.id, 0, 20);
     const requests = await this.friendRequestService.getUserRequests([
@@ -90,12 +81,6 @@ export class UserController {
     @Res() res: Response,
   ) {
     const data = await this.userService.findOne(request.user.id);
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      'Found User data:',
-      data,
-    );
 
     if (data) {
       return res.send({ data });
@@ -107,17 +92,9 @@ export class UserController {
     @Body() data: GetUsersDTO,
     @Req() req: Request & { user: { id: number } },
   ) {
-    writeLog(userServiceBgColor, userServiceTextColor, 'data: ', data);
-
     if (data.name === undefined && data.IDs === undefined)
       throw Error('Body data not provided');
     const res = await this.userService.findMany(data);
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      'Found users:',
-      res.length,
-    );
 
     return res.filter((user) => user.id !== req.user.id);
   }
@@ -129,12 +106,9 @@ export class UserController {
     @Req() req: Request & { user: { id: number } },
     @Body('data', ParseJsonPipe) body: Partial<UserProfileType>,
   ) {
-    writeLog(userServiceBgColor, userServiceTextColor, 'body:', body);
-
     const newImg = files.files && files.files[0] ? files.files[0] : undefined;
     if (newImg) newImg.originalname = decodeURIComponent(newImg.originalname);
-    const result = await this.userService.updateUser(body, req.user.id, newImg);
-    return result;
+    return await this.userService.updateUser(body, req.user.id, newImg);
   }
   @UseGuards(JwtAccessGuard)
   @Get('myFriends')
@@ -144,20 +118,12 @@ export class UserController {
     @Query('take') take: string,
     @Query('name') name?: string,
   ) {
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      `userID:${req.user.id}, skip: ${skip}, take: ${take}, name: ${name}`,
-    );
-
-    const friends = await this.friendService.getFriends(
+    return await this.friendService.getFriends(
       req.user.id,
       Number(skip),
       Number(take),
       name,
     );
-
-    return friends;
   }
   @UseInterceptors(FileFieldsInterceptor([{ name: 'img', maxCount: 1 }]))
   @Post()
@@ -168,8 +134,6 @@ export class UserController {
     @Body('userData', ParseJsonPipe)
     userData: Omit<CreateUserDTO['userData']['profile'], 'img'>,
   ) {
-    writeLog(userServiceBgColor, userServiceTextColor, `Img:`, img);
-
     try {
       const isImg = Array.isArray(img.img);
       const res = await this.userService.createUser(
@@ -181,9 +145,7 @@ export class UserController {
       this.cookieService.setRefreshToken(response, res.auth.refreshToken);
       this.cookieService.setAccessToken(response, accessToken);
       response.send({ message: 'success' });
-    } catch (error) {
-      writeLog(userServiceBgColor, userServiceTextColor, `ERROR:`, error);
-    }
+    } catch (error) {}
   }
   @UseGuards(JwtAccessGuard)
   @Post('acceptRequest')
@@ -191,28 +153,13 @@ export class UserController {
     @Body() data: { requestsID: number[] },
     @Req() req: Request & { user: { id: number } },
   ) {
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      `requestID:`,
-      data.requestsID,
-    );
-
     const validRequests = await this.friendRequestService.isRequestForUser(
       data.requestsID,
       req.user.id,
     );
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      `Valid Requests:`,
-      validRequests,
-    );
 
     if (validRequests) {
-      const result =
-        await this.friendRequestService.acceptFriendRequest(validRequests);
-      return result;
+      return await this.friendRequestService.acceptFriendRequest(validRequests);
     } else throw new UnauthorizedException('There is no access to the request');
   }
   @UseGuards(JwtAccessGuard)
@@ -221,12 +168,6 @@ export class UserController {
     @Body() data: { friendID: number },
     @Req() req: Request & { user: { id: number } },
   ) {
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      `friendID: ${data.friendID} | userID: ${req.user.id}`,
-    );
-
     await this.friendService.deleteFriend(req.user.id, data.friendID);
   }
   @UseGuards(JwtAccessGuard)
@@ -235,12 +176,6 @@ export class UserController {
     @Body() data: { requestsID: number[] },
     @Req() req: Request & { user: { id: number } },
   ) {
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      `requestID: ${data.requestsID} | userID: ${req.user.id}`,
-    );
-
     const validate = await this.friendRequestService.isRequestForUser(
       data.requestsID,
       req.user.id,
@@ -255,12 +190,6 @@ export class UserController {
     @Body() data: { friendIDs: number[] },
     @Req() req: Request & { user: { id: number } },
   ) {
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      `data: ${data} | userID: ${req.user.id}`,
-    );
-
     try {
       await this.friendRequestService.sendFriendRequest({
         userId: req.user.id,

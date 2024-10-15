@@ -3,13 +3,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UserData, UserProfileType } from './dto/user-data.dto';
 import { AuthService } from '../auth/auth.service';
 import { AuthDataDTO } from '../auth/dto/auth-data.dto';
-
-import * as chalk from 'chalk';
 import { StorageService } from '../storage/storage.service';
-import { writeLog } from '../helpers/log';
 
-const userServiceBgColor = chalk.bgGreen.black;
-const userServiceTextColor = chalk.green;
 @Injectable()
 export class UserService {
   constructor(
@@ -23,15 +18,6 @@ export class UserService {
     userData: Omit<UserData['profile'], 'img'>,
     img?: Express.Multer.File,
   ) {
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      'auth data:',
-      authData,
-      'user data:',
-      userData,
-    );
-
     return this.prisma.$transaction(async (prisma) => {
       const user = await prisma.user.create({ data: {} });
       const auth = await this.authService.register(
@@ -66,15 +52,6 @@ export class UserService {
     id: number,
     newImg?: Express.Multer.File,
   ) {
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      'id:',
-      id,
-      'data:',
-      data,
-    );
-
     if (newImg) {
       const file = await this.storage.uploadFile({ file: newImg, userID: id });
       const userData = await this.prisma.userProfile.update({
@@ -101,16 +78,6 @@ export class UserService {
     IDs?: number[];
   }) {
     const { take, skip = 0, name, IDs } = data;
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      'iDs:',
-      IDs,
-      'take:',
-      take,
-      'name',
-      name,
-    );
 
     if (name !== undefined) {
       if (name.length == 0) return [];
@@ -141,27 +108,12 @@ export class UserService {
     throw Error('undefined arguments');
   }
   async findOne(id?: number, email?: string) {
-    writeLog(
-      userServiceBgColor,
-      userServiceTextColor,
-      'id:',
-      id,
-      ' email:',
-      email,
-    );
-
     if (email) {
       const user = await this.prisma.authData.findUnique({
         where: { email },
         select: { userId: true },
       });
       if (user) {
-        writeLog(
-          userServiceBgColor,
-          userServiceTextColor,
-          'User found with ID:',
-          user.userId,
-        );
         const userData = await this.prisma.user.findUnique({
           where: { id: user.userId },
           select: { profile: true, id: true },
@@ -175,15 +127,9 @@ export class UserService {
         where: { id: parsedID },
         select: { profile: true, id: true },
       });
-      writeLog(
-        userServiceBgColor,
-        userServiceTextColor,
-        'User found with ID:',
-        user.id,
-      );
+
       return user;
     }
-    writeLog(userServiceBgColor, userServiceTextColor, 'User not found');
     return false;
   }
 }

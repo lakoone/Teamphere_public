@@ -12,13 +12,8 @@ import { ChatMetadataDTO } from './dto/chat-metadata.dto';
 import { UserDataDTO } from '../user/dto/user-data.dto';
 import { Prisma, PrismaClient } from '@prisma/client';
 
-import * as chalk from 'chalk';
-import { writeLog } from '../helpers/log';
 import { DefaultArgs } from '@prisma/client/runtime/library';
 
-const chatServiceBgColor = chalk.bgBlue.white;
-const chatServiceTextColor = chalk.blue;
-const chatServiceColor = (text: string) => chalk.bgBlue.white(text);
 @Injectable()
 export class ChatService {
   constructor(
@@ -77,31 +72,19 @@ export class ChatService {
         ],
       },
     });
-    writeLog(chatServiceBgColor, chatServiceTextColor, 'found chats: ', chat);
     return chat;
   }
   async createChats(data: CreateChatDTO[]) {
     try {
       const createdChatsData: ChatMetadataDTO[] = [];
-      writeLog(chatServiceBgColor, chatServiceTextColor, 'params: ', data);
       for (const createChatData of data) {
         const participantIDs = Array.from(
           new Set<number>([...createChatData.participants]),
         );
-        writeLog(
-          chatServiceBgColor,
-          chatServiceTextColor,
-          'participantIDs:',
-          participantIDs,
-        );
+
         const id = uuidv4();
         const isChatExist = await this.isChatExist(participantIDs);
-        writeLog(
-          chatServiceBgColor,
-          chatServiceTextColor,
-          'chat exist: ',
-          isChatExist,
-        );
+
         if (isChatExist) {
           continue;
         }
@@ -121,10 +104,6 @@ export class ChatService {
           .map((participant) => participant.profile.img)
           .join('|');
         await this.prisma.$transaction(async (tx) => {
-          console.log(
-            chatServiceColor('[chat.service - createChat] Generated ID: ') + id,
-          );
-
           const chat = await tx.chat.create({
             data: {
               id: id,
@@ -134,10 +113,6 @@ export class ChatService {
             },
           });
 
-          console.log(
-            chatServiceColor('[chat.service - createChat]') +
-              chalk.blue(' Chat created successfully'),
-          );
           await this.addParticipants(
             {
               chatId: id,
@@ -145,10 +120,7 @@ export class ChatService {
             },
             tx,
           );
-          console.log(
-            chatServiceColor('[chat.service - createChat]') +
-              chalk.blue(' Participants added successfully'),
-          );
+
           createdChatsData.push({
             id: chat.id,
             img: chat.img,
@@ -178,7 +150,6 @@ export class ChatService {
       '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
     >,
   ): Promise<void> {
-    writeLog(chatServiceBgColor, chatServiceTextColor, 'data: ', data);
     const prisma = tx ? tx : this.prisma;
     const { chatId, userIds } = data;
     const chatParticipants = userIds.map((userId) => {
@@ -193,14 +164,8 @@ export class ChatService {
     await prisma.chatParticipant.createMany({
       data: chatParticipants,
     });
-    writeLog(
-      chatServiceBgColor,
-      chatServiceTextColor,
-      'Participants added successfully ',
-    );
   }
   async getUserChatsMetadata(userId: number): Promise<ChatMetadataDTO[]> {
-    writeLog(chatServiceBgColor, chatServiceTextColor, 'userId :', userId);
     const chats = await this.prisma.chatParticipant.findMany({
       where: { userId },
       include: {
@@ -291,12 +256,7 @@ export class ChatService {
         participants: chatParticipants,
       } as ChatMetadataDTO;
     });
-    writeLog(
-      chatServiceBgColor,
-      chatServiceTextColor,
-      `Chat metadata for userID ${userId} :`,
-      chatMetadata,
-    );
+
     return chatMetadata;
   }
   async getUnreadChatsIDs(userId: number) {
@@ -343,7 +303,6 @@ export class ChatService {
     options?: { take?: number; lastLoadedMessageDate?: string },
   ) {
     const validation = await this.validateUserByChat(userID, chatId);
-    writeLog(chatServiceBgColor, chatServiceTextColor, 'chatId :', chatId);
 
     if (validation) {
       const messages = await this.message.getMessages({
@@ -351,12 +310,7 @@ export class ChatService {
         take: options?.take,
         lastLoadedMessageDate: options?.lastLoadedMessageDate,
       });
-      writeLog(
-        chatServiceBgColor,
-        chatServiceTextColor,
-        'got messages :',
-        messages.length,
-      );
+
       return messages;
     }
     throw new UnauthorizedException('no access to chat messages');

@@ -14,16 +14,12 @@ import { JwtAccessGuard } from '../auth/guards/jwt-auth.guard';
 import { Request } from 'express';
 import { TaskService } from './task.service';
 import { CreateTaskDTO } from './dto/create-task.dto';
-import * as chalk from 'chalk';
-import { writeLog } from '../helpers/log';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ParseJsonPipe } from '../pipes/ParseJsonPipe';
 import { NotificationGateway } from '../websocket/notification/NotificationGateway.service';
 import { UpdateTaskDTO } from './dto/update-task.dto';
 import { StorageService } from '../storage/storage.service';
 import { fileDTO } from '../chat/dto/init-message.dto';
-const taskSBgColor = chalk.bgRgb(151, 252, 181).black;
-const taskTextColor = chalk.bgRgb(151, 252, 181);
 @Controller('/api/task')
 export class TaskController {
   constructor(
@@ -39,13 +35,6 @@ export class TaskController {
     @Req() request: Request & { user: { id: number } },
     @Body('data', ParseJsonPipe) data: CreateTaskDTO,
   ) {
-    writeLog(
-      taskSBgColor,
-      taskTextColor,
-      `creating task from ${request.user.id}`,
-    );
-    writeLog(taskSBgColor, taskTextColor, `data OBJECT :`, data);
-
     const task = await this.taskService.createTask(
       data,
       request.user.id,
@@ -72,8 +61,6 @@ export class TaskController {
     @Body('data', ParseJsonPipe)
     data: Omit<UpdateTaskDTO, 'taskDescriptionFiles' | 'taskAnswerFiles'>,
   ) {
-    writeLog(taskSBgColor, taskTextColor, 'Got data: ', data);
-    writeLog(taskSBgColor, taskTextColor, 'Got files: ', files);
     const task = await this.taskService.getTaskByID(taskID);
     const isAuthor = task.createdByID === request.user.id;
     const isAssigned = !!task.usersAssigned.find(
